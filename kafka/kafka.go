@@ -65,7 +65,7 @@ func (k *KafkaConsumer) StartReader(reader *kafka.Reader) {
 			continue
 		}
 
-		go receiver(string(msg.Key), msg.Topic, string(msg.Value))
+		go receiver(msg.Topic, string(msg.Key), string(msg.Value))
 
 	}
 }
