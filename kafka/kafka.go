@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+type HandlerListener func(topic, key, value string)
+
 type KafkaConsumer struct {
 	conn     *kafka.Conn
 	Listener map[string]func(topic, key, value string)
@@ -62,4 +64,12 @@ func (k *KafkaConsumer) StartReader(reader *kafka.Reader) {
 		go receiver(string(msg.Key), msg.Topic, string(msg.Value))
 
 	}
+}
+
+func (k *KafkaConsumer) SetListener(topic string, listener HandlerListener) {
+	if k.Listener == nil {
+		k.Listener = make(map[string]func(topic, key, value string), 0)
+	}
+
+	k.Listener[topic] = listener
 }
