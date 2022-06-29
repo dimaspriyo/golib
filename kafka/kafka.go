@@ -39,6 +39,8 @@ func (k *KafkaConsumer) Start() *KafkaConsumer {
 			StartOffset:           kafka.LastOffset,
 		})
 
+		fmt.Println("Add Listener For Topic: ", topic)
+
 		go k.StartReader(reader)
 	}
 
@@ -55,6 +57,8 @@ func (k *KafkaConsumer) StartReader(reader *kafka.Reader) {
 			}
 			continue
 		}
+
+		fmt.Println("Incoming Message for Topic: ", msg.Topic)
 
 		receiver, ok := k.Listener[msg.Topic]
 		if !ok {
