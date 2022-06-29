@@ -14,15 +14,13 @@ type KafkaConsumer struct {
 	config   *KafkaConfig
 }
 
-func (k *KafkaConsumer) New(config *KafkaConfig) *KafkaConsumer {
+func (k *KafkaConsumer) New(config *KafkaConfig) {
 	if config == nil {
 		panic("config is nil")
 	}
 
-	return &KafkaConsumer{
-		ctx:    context.Background(),
-		config: config,
-	}
+	k.ctx = context.Background()
+	k.config = config
 }
 
 func (k *KafkaConsumer) Start() *KafkaConsumer {
