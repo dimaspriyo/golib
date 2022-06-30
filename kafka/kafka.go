@@ -7,11 +7,11 @@ import (
 	"strings"
 )
 
-type HandlerListener func(topic, key, value string)
+type HandlerListener func(reader *kafka.Reader, topic, key, value string)
 
 type KafkaConsumer struct {
 	conn     *kafka.Conn
-	Listener map[string]func(topic, key, value string)
+	Listener map[string]HandlerListener
 	ctx      context.Context
 	config   *KafkaConfig
 }
@@ -49,7 +49,7 @@ func (k *KafkaConsumer) Start() *KafkaConsumer {
 
 func (k *KafkaConsumer) StartReader(reader *kafka.Reader) {
 	for {
-		msg, err := reader.ReadMessage(k.ctx)
+		msg, err := reader.FetchMessage(k.ctx)
 		if err != nil {
 			fmt.Printf("consumer reading message : %s\n", err.Error())
 			if err != nil {
@@ -65,14 +65,14 @@ func (k *KafkaConsumer) StartReader(reader *kafka.Reader) {
 			continue
 		}
 
-		go receiver(msg.Topic, string(msg.Key), string(msg.Value))
+		go receiver(reader, msg.Topic, string(msg.Key), string(msg.Value))
 
 	}
 }
 
 func (k *KafkaConsumer) SetListener(topic string, listener HandlerListener) {
 	if k.Listener == nil {
-		k.Listener = make(map[string]func(topic, key, value string), 0)
+		k.Listener = make(map[string]HandlerListener, 0)
 	}
 
 	k.Listener[topic] = listener
