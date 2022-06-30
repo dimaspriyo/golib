@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-type HandlerListener func(ctx context.Context, reader *kafka.Reader, topic, key, value string)
+type HandlerListener func(ctx context.Context, reader *kafka.Reader, msg kafka.Message)
 
 type KafkaConsumer struct {
 	conn     *kafka.Conn
@@ -65,7 +65,7 @@ func (k *KafkaConsumer) StartReader(reader *kafka.Reader) {
 			continue
 		}
 
-		go receiver(k.ctx, reader, msg.Topic, string(msg.Key), string(msg.Value))
+		go receiver(k.ctx, reader, msg)
 
 	}
 }
