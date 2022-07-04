@@ -40,7 +40,9 @@ func (k *KafkaConsumer) Start() *KafkaConsumer {
 			StartOffset:           kafka.LastOffset,
 		})
 
+		fmt.Println("Before Add Listener,  goroutine: ", runtime.NumGoroutine())
 		fmt.Println("Add Listener For Topic: ", topic)
+		fmt.Println("Current goroutine: ", runtime.NumGoroutine())
 
 		go k.StartReader(reader)
 	}
