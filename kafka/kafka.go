@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/segmentio/kafka-go"
+	"runtime"
 	"strings"
 )
 
@@ -58,12 +59,13 @@ func (k *KafkaConsumer) StartReader(reader *kafka.Reader) {
 			continue
 		}
 
-		fmt.Println("Incoming Message for Topic: ", msg.Topic)
-
 		receiver, ok := k.Listener[msg.Topic]
 		if !ok {
 			continue
 		}
+
+		fmt.Println("Add goroutine for topic: ", msg.Topic)
+		fmt.Println("Current goroutine: ", runtime.NumGoroutine())
 
 		go receiver(k.ctx, reader, msg)
 
